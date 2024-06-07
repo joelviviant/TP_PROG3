@@ -14,15 +14,23 @@ public class Main {
 		List<Tarea> tareas = reader.readTasks("/home/jowi/IdeaProjects/TP_PROG3/datasets/Tareas.csv");
 
 		// Parámetro de tiempo máximo permitido para procesadores no refrigerados
-		int tiempoMaxNoRefrigerado = 10;
+		int tiempoMaxNoRefrigerado = 70;
 
 		// Crear instancia de AsignacionTareasBacktracking
-		AsignacionTareasBacktracking backtracking = new AsignacionTareasBacktracking(procesadores, tareas, tiempoMaxNoRefrigerado);
+
+		/*AsignacionTareasBacktracking backtracking = new AsignacionTareasBacktracking(procesadores, tareas, tiempoMaxNoRefrigerado);
 
 		// Ejecutar el algoritmo de Backtracking
 		backtracking.backtracking();
 
 		// Imprimir los resultados
 		backtracking.imprimirResultado();
+
+
+		 */
+		AsignacionTareasGreedy greedy = new AsignacionTareasGreedy(procesadores, tareas, tiempoMaxNoRefrigerado);
+
+		greedy.greedy();
+
 	}
 }

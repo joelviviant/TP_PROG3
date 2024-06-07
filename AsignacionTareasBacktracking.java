@@ -24,11 +24,11 @@ public class AsignacionTareasBacktracking {
     }
 
     /*
-     * Estrategia de Backtracking:
-     * 1. Intentar asignar cada tarea a cada procesador de manera recursiva.
-     * 2. Verificar restricciones en cada paso.
-     * 3. Guardar la mejor asignación encontrada.
-     * 4. Contar la cantidad de estados generados.
+     La estrategia de Backtracking consiste en asignar recursivamente cada tarea a cada procesador,
+     verificando en cada paso que se cumplan las restricciones (no más de dos tareas críticas por procesador
+     y no exceder el tiempo máximo permitido para procesadores no refrigerados). Durante el proceso,
+     se guarda la mejor asignación encontrada en términos de tiempo máximo de ejecución
+     y se lleva un conteo de la cantidad de estados generados para evaluar el costo de la solución.
      */
     public void backtracking() {
         Map<Procesador, List<Tarea>> asignacionActual = new HashMap<>();
