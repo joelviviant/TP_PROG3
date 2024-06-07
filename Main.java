@@ -13,10 +13,8 @@ public class Main {
 		List<Procesador> procesadores = reader.readProcessors("/home/jowi/IdeaProjects/TP_PROG3/datasets/Procesadores.csv");
 		List<Tarea> tareas = reader.readTasks("/home/jowi/IdeaProjects/TP_PROG3/datasets/Tareas.csv");
 
-		// Parámetro de tiempo máximo permitido para procesadores no refrigerados
 		int tiempoMaxNoRefrigerado = 70;
 
-		// Crear instancia de AsignacionTareasBacktracking
 
 		/*AsignacionTareasBacktracking backtracking = new AsignacionTareasBacktracking(procesadores, tareas, tiempoMaxNoRefrigerado);
 
