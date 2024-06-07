@@ -6,57 +6,49 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import tpe.Tarea;
 import tpe.Procesador;
+import tpe.Tarea;
 
 public class CSVReader {
 
 	public CSVReader() {
 	}
-	
-	public Map<String, Tarea> readTasks(String taskPath) {
-		Map<String, Tarea> tareas = new HashMap<>();
-		// Obtengo una lista con las lineas del archivo
-		// lines.get(0) tiene la primer linea del archivo
-		// lines.get(1) tiene la segunda linea del archivo... y así
+
+	public List<Tarea> readTasks(String taskPath) {
+		List<Tarea> tareas = new ArrayList<>();
 		ArrayList<String[]> lines = this.readContent(taskPath);
-		
-		for (String[] line: lines) {
-			// Cada linea es un arreglo de Strings, donde cada posicion guarda un elemento
+
+		for (String[] line : lines) {
 			String id = line[0].trim();
 			String nombre = line[1].trim();
 			Integer tiempo = Integer.parseInt(line[2].trim());
 			Boolean critica = Boolean.parseBoolean(line[3].trim());
 			Integer prioridad = Integer.parseInt(line[4].trim());
-			// Aca instanciar lo que necesiten en base a los datos leidos
-			tareas.put(id, new Tarea(id, nombre, tiempo, critica, prioridad));
+			tareas.add(new Tarea(id, nombre, tiempo, critica, prioridad));
 		}
-		
+
 		return tareas;
 	}
-	
-	public void readProcessors(String processorPath) {
-		// Obtengo una lista con las lineas del archivo
-		// lines.get(0) tiene la primer linea del archivo
-		// lines.get(1) tiene la segunda linea del archivo... y así
+
+	public List<Procesador> readProcessors(String processorPath) {
+		List<Procesador> procesadores = new ArrayList<>();
 		ArrayList<String[]> lines = this.readContent(processorPath);
-		
-		for (String[] line: lines) {
-			// Cada linea es un arreglo de Strings, donde cada posicion guarda un elemento
+
+		for (String[] line : lines) {
 			String id = line[0].trim();
 			String codigo = line[1].trim();
 			Boolean refrigerado = Boolean.parseBoolean(line[2].trim());
 			Integer anio = Integer.parseInt(line[3].trim());
-			// Aca instanciar lo que necesiten en base a los datos leidos
-			new Procesador(id, codigo, refrigerado, anio);
+			procesadores.add(new Procesador(id, codigo, refrigerado, anio));
 		}
-		
+
+		return procesadores;
 	}
 
 	private ArrayList<String[]> readContent(String path) {
-		ArrayList<String[]> lines = new ArrayList<String[]>();
+		ArrayList<String[]> lines = new ArrayList<>();
 		File file = new File(path);
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
@@ -70,12 +62,13 @@ public class CSVReader {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			if (bufferedReader != null)
-				try {
+		} finally {
+			try {
+				if (bufferedReader != null)
 					bufferedReader.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return lines;
 	}

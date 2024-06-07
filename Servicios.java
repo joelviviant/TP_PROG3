@@ -20,7 +20,7 @@ public class Servicios {
 	{
 		CSVReader reader = new CSVReader();
 		reader.readProcessors(pathProcesadores);
-		this.tareas = reader.readTasks(pathTareas);
+		this.tareas = (Map<String, Tarea>) reader.readTasks(pathTareas);
 	}
 	
 	/*

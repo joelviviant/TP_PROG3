@@ -1,8 +1,28 @@
 package tpe;
 
+import java.util.List;
+import tpe.utils.CSVReader;
+
 public class Main {
-	public static void main(String args[]) {
-		Servicios servicios = new Servicios("/direccion del archivo Procesadores.csv", "/direccion del archivo Tareas.csv");
-		System.out.println(servicios.servicio3(43, 32));
+
+	public static void main(String[] args) {
+		// Crear instancias del lector CSV
+		CSVReader reader = new CSVReader();
+
+		// Leer los procesadores y las tareas desde los archivos CSV
+		List<Procesador> procesadores = reader.readProcessors("/home/jowi/IdeaProjects/TP_PROG3/datasets/Procesadores.csv");
+		List<Tarea> tareas = reader.readTasks("/home/jowi/IdeaProjects/TP_PROG3/datasets/Tareas.csv");
+
+		// Parámetro de tiempo máximo permitido para procesadores no refrigerados
+		int tiempoMaxNoRefrigerado = 10;
+
+		// Crear instancia de AsignacionTareasBacktracking
+		AsignacionTareasBacktracking backtracking = new AsignacionTareasBacktracking(procesadores, tareas, tiempoMaxNoRefrigerado);
+
+		// Ejecutar el algoritmo de Backtracking
+		backtracking.backtracking();
+
+		// Imprimir los resultados
+		backtracking.imprimirResultado();
 	}
 }
