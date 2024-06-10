@@ -10,8 +10,8 @@ public class Main {
 		CSVReader reader = new CSVReader();
 
 		// Leer los procesadores y las tareas desde los archivos CSV
-		List<Procesador> procesadores = reader.readProcessors("/home/jowi/IdeaProjects/TP_PROG3/datasets/Procesadores.csv");
-		List<Tarea> tareas = reader.readTasks("/home/jowi/IdeaProjects/TP_PROG3/datasets/Tareas.csv");
+		List<Procesador> procesadores = reader.readProcessors("/TP_PROG3/datasets/Procesadores.csv");
+		List<Tarea> tareas = reader.readTasks("/TP_PROG3/datasets/Tareas.csv");
 
 		int tiempoMaxNoRefrigerado = 70;
 

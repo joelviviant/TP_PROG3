@@ -21,14 +21,12 @@ public class AsignacionTareasGreedy {
         this.candidatosConsiderados = 0;
     }
 
-    /*
-     * Estrategia Greedy:
-     * 1. Ordenar las tareas por prioridad.
-     * 2. Asignar tareas críticas primero.
-     * 3. Asignar el resto de las tareas equilibrando la carga.
-     * 4. Contar la cantidad de candidatos considerados.
-     */
+    /*Primero, las tareas se ordenan según su prioridad, luego se asignan las tareas críticas primero para asegurar su ejecución
+    prioritaria. Después, se asignan las tareas restantes, buscando equilibrar la carga entre los procesadores.
+    Finalmente, se realiza un seguimiento de la cantidad de candidatos considerados durante el proceso de asignación.
+    */
     public void greedy() {
+
         Map<Procesador, List<Tarea>> asignacion = new HashMap<>();
         for (Procesador p : procesadores) {
             asignacion.put(p, new ArrayList<>());
