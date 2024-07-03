@@ -13,7 +13,7 @@ public class Main {
 		List<Procesador> procesadores = reader.readProcessors("./datasets/Procesadores.csv");
 		List<Tarea> tareas = reader.readTasks("./datasets/Tareas.csv");
 
-		int tiempoMaxNoRefrigerado = 80;
+		int tiempoMaxNoRefrigerado = 200;
 
 
 		AsignacionTareasBacktracking backtracking = new AsignacionTareasBacktracking(procesadores, tareas, tiempoMaxNoRefrigerado);
