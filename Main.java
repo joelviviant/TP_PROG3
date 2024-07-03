@@ -13,10 +13,10 @@ public class Main {
 		List<Procesador> procesadores = reader.readProcessors("./datasets/Procesadores.csv");
 		List<Tarea> tareas = reader.readTasks("./datasets/Tareas.csv");
 
-		int tiempoMaxNoRefrigerado = 70;
+		int tiempoMaxNoRefrigerado = 80;
 
 
-		/*AsignacionTareasBacktracking backtracking = new AsignacionTareasBacktracking(procesadores, tareas, tiempoMaxNoRefrigerado);
+		AsignacionTareasBacktracking backtracking = new AsignacionTareasBacktracking(procesadores, tareas, tiempoMaxNoRefrigerado);
 
 		// Ejecutar el algoritmo de Backtracking
 		backtracking.backtracking();
@@ -25,10 +25,10 @@ public class Main {
 		backtracking.imprimirResultado();
 
 
-		 */
-		AsignacionTareasGreedy greedy = new AsignacionTareasGreedy(procesadores, tareas, tiempoMaxNoRefrigerado);
 
-		greedy.greedy();
+		//AsignacionTareasGreedy greedy = new AsignacionTareasGreedy(procesadores, tareas, tiempoMaxNoRefrigerado);
+
+		//greedy.greedy();
 
 	}
 }

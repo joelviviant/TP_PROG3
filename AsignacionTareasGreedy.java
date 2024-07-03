@@ -21,34 +21,42 @@ public class AsignacionTareasGreedy {
         this.candidatosConsiderados = 0;
     }
 
-    /*Primero, las tareas se ordenan según su prioridad, luego se asignan las tareas críticas primero para asegurar su ejecución
-    prioritaria. Después, se asignan las tareas restantes, buscando equilibrar la carga entre los procesadores.
-    Finalmente, se realiza un seguimiento de la cantidad de candidatos considerados durante el proceso de asignación.
-    */
     public void greedy() {
-
         Map<Procesador, List<Tarea>> asignacion = new HashMap<>();
+        Map<Procesador, Integer> tiemposActuales = new HashMap<>();
+
         for (Procesador p : procesadores) {
             asignacion.put(p, new ArrayList<>());
+            tiemposActuales.put(p, 0);
         }
 
-        Collections.sort(tareas, Comparator.comparingInt(Tarea::getNivel_prioridad).reversed());
-
         for (Tarea tarea : tareas) {
-            candidatosConsiderados++;
+            Procesador mejorProcesador = null;
+            int menorTiempo = Integer.MAX_VALUE;
+
             for (Procesador procesador : procesadores) {
-                if (puedeAsignar(procesador, tarea, asignacion)) {
-                    asignacion.get(procesador).add(tarea);
-                    break;
+                candidatosConsiderados++;
+                if (puedeAsignar(procesador, tarea, asignacion, tiemposActuales)) {
+                    int tiempoTotal = tiemposActuales.get(procesador) + tarea.getTiempo_ejecucion();
+                    if (tiempoTotal < menorTiempo) {
+                        menorTiempo = tiempoTotal;
+                        mejorProcesador = procesador;
+                    }
                 }
+            }
+
+            if (mejorProcesador != null) {
+                asignacion.get(mejorProcesador).add(tarea);
+                tiemposActuales.put(mejorProcesador, tiemposActuales.get(mejorProcesador) + tarea.getTiempo_ejecucion());
             }
         }
 
         imprimirResultado(asignacion);
     }
 
-    private boolean puedeAsignar(Procesador procesador, Tarea tarea, Map<Procesador, List<Tarea>> asignacionActual) {
+    private boolean puedeAsignar(Procesador procesador, Tarea tarea, Map<Procesador, List<Tarea>> asignacionActual, Map<Procesador, Integer> tiemposActuales) {
         List<Tarea> tareasAsignadas = asignacionActual.get(procesador);
+
         if (tarea.isEs_critica()) {
             int countCriticas = 0;
             for (Tarea t : tareasAsignadas) {
@@ -60,15 +68,11 @@ public class AsignacionTareasGreedy {
                 return false;
             }
         }
-        if (!procesador.isEsta_refrigerado()) {
-            int tiempoTotal = 0;
-            for (Tarea t : tareasAsignadas) {
-                tiempoTotal += t.getTiempo_ejecucion();
-            }
-            if (tiempoTotal + tarea.getTiempo_ejecucion() > X) {
-                return false;
-            }
+
+        if (!procesador.isEsta_refrigerado() && (tiemposActuales.get(procesador) + tarea.getTiempo_ejecucion() > X)) {
+            return false;
         }
+
         return true;
     }
 

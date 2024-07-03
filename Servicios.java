@@ -1,9 +1,7 @@
 package tpe;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import tpe.utils.CSVReader;
 
 /**
@@ -13,14 +11,34 @@ import tpe.utils.CSVReader;
  */
 public class Servicios {
 	private Map<String, Tarea> tareas = new HashMap<>();
-	/*
-     Complejidad computacional: O(2n) ó O(n) (preguntar)
-     */
+	private LinkedList<Tarea> tareasCriticas;
+	private LinkedList<Tarea> tareasNoCriticas;
+	private ArrayList<Tarea> tareasPrioridad;
+
+
 	public Servicios(String pathProcesadores, String pathTareas)
 	{
 		CSVReader reader = new CSVReader();
+		this.tareasCriticas = new LinkedList<>();
+		this.tareasNoCriticas = new LinkedList<>();
+		this.tareasPrioridad = new ArrayList<>();
 		reader.readProcessors(pathProcesadores);
-		this.tareas = (Map<String, Tarea>) reader.readTasks(pathTareas);
+		this.inicializarEstructuras(reader.readTasks(pathTareas));
+	}
+
+
+	private void inicializarEstructuras(List<Tarea> tareas) {
+		for (Tarea t : tareas) {
+			if (t.isEs_critica()) // Listas de tareas críticas y no críticas
+				this.tareasCriticas.add(t);
+			else
+				this.tareasNoCriticas.add(t);
+
+			this.tareas.put(t.getId_tarea(), t); // Hashmap por id
+			this.tareasPrioridad.add(t); // Lista por prioridad
+		}
+
+		Collections.sort(this.tareasPrioridad);
 	}
 	
 	/*
@@ -34,26 +52,10 @@ public class Servicios {
 	  Complejidad computacional: O(n)
      */
 	public List<Tarea> servicio2(boolean esCritica) {
-		List<Tarea> resultado = new LinkedList<>();
-
-		if (esCritica) {
-			for (String id : tareas.keySet()) {
-				Tarea tarea = tareas.get(id);
-				boolean cumple = tarea.isEs_critica();
-				if (cumple) {
-					resultado.add(tarea);
-				}
-			}
-		} else {
-			for (String id : tareas.keySet()) {
-				Tarea tarea = tareas.get(id);
-				boolean cumple = tarea.isEs_critica();
-				if (!cumple) {
-					resultado.add(tarea);
-				}
-			}
-		}
-		return resultado;
+		if (esCritica)
+			return this.tareasCriticas;
+		else
+			return this.tareasNoCriticas;
 	}
 
     /*
@@ -67,7 +69,7 @@ public class Servicios {
 		}
 		for (String id : tareas.keySet()) {
 			Tarea tarea = tareas.get(id);
-			if (tarea.getNivel_prioridad() >= prioridadInferior && tarea.getNivel_prioridad() <= prioridadSuperior) {
+			if (tarea.getPrioridad() >= prioridadInferior && tarea.getPrioridad() <= prioridadSuperior) {
 				resultado.add(tarea);
 			}
 		}

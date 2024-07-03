@@ -23,25 +23,23 @@ public class AsignacionTareasBacktracking {
         this.estadosGenerados = 0;
     }
 
-    /*
-     La estrategia de Backtracking consiste en asignar recursivamente cada tarea a cada procesador,
-     verificando en cada paso que se cumplan las restricciones (no más de dos tareas críticas por procesador
-     y no exceder el tiempo máximo permitido para procesadores no refrigerados). Durante el proceso,
-     se guarda la mejor asignación encontrada en términos de tiempo máximo de ejecución
-     y se lleva un conteo de la cantidad de estados generados para evaluar el costo de la solución.
-     */
     public void backtracking() {
         Map<Procesador, List<Tarea>> asignacionActual = new HashMap<>();
+        Map<Procesador, Integer> tiemposActuales = new HashMap<>();
+        Map<Procesador, Integer> tareasCriticasActuales = new HashMap<>();
+
         for (Procesador p : procesadores) {
             asignacionActual.put(p, new ArrayList<>());
+            tiemposActuales.put(p, 0);
+            tareasCriticasActuales.put(p, 0);
         }
-        backtrackingRecursivo(0, asignacionActual);
+        backtrackingRecursivo(0, asignacionActual, tiemposActuales, tareasCriticasActuales);
     }
 
-    private void backtrackingRecursivo(int tareaIndex, Map<Procesador, List<Tarea>> asignacionActual) {
+    private void backtrackingRecursivo(int tareaIndex, Map<Procesador, List<Tarea>> asignacionActual, Map<Procesador, Integer> tiemposActuales, Map<Procesador, Integer> tareasCriticasActuales) {
         estadosGenerados++;
         if (tareaIndex == tareas.size()) {
-            int tiempoMax = calcularTiempoMax(asignacionActual);
+            int tiempoMax = calcularTiempoMax(tiemposActuales);
             if (tiempoMax < mejorTiempoMax) {
                 mejorTiempoMax = tiempoMax;
                 mejorAsignacion = new HashMap<>(asignacionActual);
@@ -51,48 +49,40 @@ public class AsignacionTareasBacktracking {
 
         Tarea tarea = tareas.get(tareaIndex);
         for (Procesador procesador : procesadores) {
-            if (puedeAsignar(procesador, tarea, asignacionActual)) {
+            if (puedeAsignar(procesador, tarea, tiemposActuales, tareasCriticasActuales)) {
                 asignacionActual.get(procesador).add(tarea);
-                backtrackingRecursivo(tareaIndex + 1, asignacionActual);
+                int tiempoNuevo = tiemposActuales.get(procesador) + tarea.getTiempo_ejecucion();
+                int tareasCriticasNuevas = tareasCriticasActuales.get(procesador) + (tarea.isEs_critica() ? 1 : 0);
+                tiemposActuales.put(procesador, tiempoNuevo);
+                tareasCriticasActuales.put(procesador, tareasCriticasNuevas);
+
+                // Poda
+                if (calcularTiempoMax(tiemposActuales) < mejorTiempoMax) {
+                    backtrackingRecursivo(tareaIndex + 1, asignacionActual, tiemposActuales, tareasCriticasActuales);
+                }
+
                 asignacionActual.get(procesador).remove(tarea);
+                tiemposActuales.put(procesador, tiemposActuales.get(procesador) - tarea.getTiempo_ejecucion());
+                tareasCriticasActuales.put(procesador, tareasCriticasActuales.get(procesador) - (tarea.isEs_critica() ? 1 : 0));
             }
         }
     }
 
-    private boolean puedeAsignar(Procesador procesador, Tarea tarea, Map<Procesador, List<Tarea>> asignacionActual) {
-        List<Tarea> tareasAsignadas = asignacionActual.get(procesador);
-        if (tarea.isEs_critica()) {
-            int countCriticas = 0;
-            for (Tarea t : tareasAsignadas) {
-                if (t.isEs_critica()) {
-                    countCriticas++;
-                }
-            }
-            if (countCriticas >= 2) {
-                return false;
-            }
+    private boolean puedeAsignar(Procesador procesador, Tarea tarea, Map<Procesador, Integer> tiemposActuales, Map<Procesador, Integer> tareasCriticasActuales) {
+        if (tarea.isEs_critica() && tareasCriticasActuales.get(procesador) >= 2) {
+            return false;
         }
-        if (!procesador.isEsta_refrigerado()) {
-            int tiempoTotal = 0;
-            for (Tarea t : tareasAsignadas) {
-                tiempoTotal += t.getTiempo_ejecucion();
-            }
-            if (tiempoTotal + tarea.getTiempo_ejecucion() > X) {
-                return false;
-            }
+        if (!procesador.isEsta_refrigerado() && (tiemposActuales.get(procesador) + tarea.getTiempo_ejecucion() > X)) {
+            return false;
         }
         return true;
     }
 
-    private int calcularTiempoMax(Map<Procesador, List<Tarea>> asignacionActual) {
+    private int calcularTiempoMax(Map<Procesador, Integer> tiemposActuales) {
         int maxTiempo = 0;
-        for (Map.Entry<Procesador, List<Tarea>> entry : asignacionActual.entrySet()) {
-            int tiempoTotal = 0;
-            for (Tarea tarea : entry.getValue()) {
-                tiempoTotal += tarea.getTiempo_ejecucion();
-            }
+        for (Map.Entry<Procesador, Integer> entry : tiemposActuales.entrySet()) {
+            int tiempoTotal = entry.getValue();
             if (!entry.getKey().isEsta_refrigerado() && tiempoTotal > X) {
-                // Si el procesador no está refrigerado y el tiempo total excede X, ajustamos el tiempo máximo
                 tiempoTotal = X;
             }
             if (tiempoTotal > maxTiempo) {
